@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 
 public class CodingExamB {
 	/*
@@ -15,7 +16,7 @@ public class CodingExamB {
 	 */
 	
 	
-	public static String getLoggingInfo(String fileName) {
+	public static String getLoggingInfo(String fileName) throws IOException {
 		/*
 		 * 1. Complete the getLoggingInfoMethod.
 		 *    The method takes in a String for a file and returns a String. 
@@ -24,11 +25,31 @@ public class CodingExamB {
 		 *    into one large String. The string will also state the file name and
 		 *    the line number for where each TODO was found. 
 		*/
-		
-		return "";
+		String logString = "File: " + fileName + "\n";
+		try {
+			BufferedReader r = new BufferedReader(new FileReader(fileName));
+			int line = 0;
+			boolean isDone = false;
+			while(isDone == false) {
+				String l = r.readLine();
+				line++;
+				if(l == null) {
+					isDone = true;
+					break;
+				}
+				if(l.contains("//TODO:")) {
+					logString+=(line + ": " + l.replace("\t","") + "\n");
+				}
+			}
+			logString+="\n";
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return logString;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String finalLogString = getLoggingInfo("src/Coding_Exam_B/classes/Camera.java");
 		finalLogString += getLoggingInfo("src/Coding_Exam_B/classes/RayTracedImageViewer.java");
 		finalLogString += getLoggingInfo("src/Coding_Exam_B/classes/RayTracer.java");
@@ -37,6 +58,13 @@ public class CodingExamB {
 		/*
 		 * 2. Write the finalLogString to a file called TODO_Log.txt. The file should match TODO_Log_example.txt. 
 		 */
-
+		try {
+			System.out.print(finalLogString);
+			FileWriter w = new FileWriter("src/Coding_Exam_B/TODO_Log.txt", true);
+			w.write(finalLogString);
+			w.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
